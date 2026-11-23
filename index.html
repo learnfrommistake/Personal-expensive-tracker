@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal Expense & Budget Tracker</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Chart.js v4.4 CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
+      defer
+    ></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="index.css" />
+    <!-- Application Logic -->
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <!-- Print-Only Statement Header -->
+    <header class="print-only-header">
+      <h1>Personal Expense & Budget Statement</h1>
+      <p id="printPeriodLabel">Period: All Months | Currency: INR (₹)</p>
+    </header>
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar" aria-label="Primary Navigation">
+      <div class="container nav-content">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">₹</div>
+          <div>
+            <h1 class="brand-title">FinTrack Pro</h1>
+            <span class="brand-subtitle"
+              >Personal Expense & Budget Tracker</span
+            >
+          </div>
+        </div>
+
+        <div class="nav-actions">
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            id="seedDemoBtn"
+            title="Load sample student transactions"
+          >
+            Load Sample Data
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            id="exportBackupBtn"
+            title="Download full JSON backup"
+          >
+            Backup JSON
+          </button>
+          <label
+            class="btn btn-outline btn-sm file-upload-label"
+            title="Restore from JSON backup"
+          >
+            Restore JSON
+            <input type="file" id="importBackupInput" accept=".json" hidden />
+          </label>
+          <button
+            type="button"
+            class="btn btn-icon"
+            id="themeToggleBtn"
+            aria-label="Toggle dark or light theme"
+            title="Toggle Theme"
+          >
+            <span id="themeIcon">🌙</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Dashboard Container -->
+    <main class="container main-content">
+      <!-- Proactive Budget Threshold Alert Banner (FR-04) -->
+      <div id="budgetAlertBanner" class="alert-banner hidden" role="alert">
+        <span id="alertIcon" class="alert-icon">⚠️</span>
+        <div class="alert-text">
+          <strong id="alertTitle">Budget Alert</strong>
+          <p id="alertMessage">
+            You have reached 80% of your monthly spending limit.
+          </p>
+        </div>
+      </div>
+
+      <!-- Real-Time KPI Summary Cards (FR-03) -->
+      <section class="kpi-grid" aria-label="Financial Summary">
+        <article class="card kpi-card kpi-income">
+          <div class="kpi-header">
+            <span class="kpi-label">Total Income</span>
+            <span class="kpi-badge badge-green">+ Inflow</span>
+          </div>
+          <h2 class="kpi-value" id="kpiTotalIncome">₹0.00</h2>
+          <p class="kpi-meta" id="kpiIncomeCount">0 income entries</p>
+        </article>
+
+        <article class="card kpi-card kpi-expense">
+          <div class="kpi-header">
+            <span class="kpi-label">Total Expenses</span>
+            <span class="kpi-badge badge-red">- Outflow</span>
+          </div>
+          <h2 class="kpi-value" id="kpiTotalExpense">₹0.00</h2>
+          <p class="kpi-meta" id="kpiExpenseCount">0 expense entries</p>
+        </article>
+
+        <article class="card kpi-card kpi-balance">
+          <div class="kpi-header">
+            <span class="kpi-label">Net Balance</span>
+            <span class="kpi-badge badge-blue">Available</span>
+          </div>
+          <h2 class="kpi-value" id="kpiNetBalance">₹0.00</h2>
+          <p class="kpi-meta">Income minus expenses</p>
+        </article>
+
+        <article class="card kpi-card kpi-savings">
+          <div class="kpi-header">
+            <span class="kpi-label">Savings Rate</span>
+            <span class="kpi-badge badge-purple">Ratio</span>
+          </div>
+          <h2 class="kpi-value" id="kpiSavingsRate">0.0%</h2>
+          <p class="kpi-meta" id="kpiSavingsStatus">
+            Track your monthly surplus
+          </p>
+        </article>
+      </section>
+
+      <!-- Primary Workspace Grid: Form + Budget Governance + Analytics -->
+      <section class="workspace-grid">
+        <!-- Left Column: Quick Transaction Entry Form (FR-01) -->
+        <article class="card form-card">
+          <div class="card-header">
+            <h3 id="formHeading">Add New Transaction</h3>
+            <span class="pill">Under 5s Entry</span>
+          </div>
+
+          <form id="transactionForm" novalidate>
+            <input type="hidden" id="editTxnId" />
+
+            <!-- Transaction Type Segmented Control -->
+            <div class="form-group">
+              <label class="form-label">Transaction Type</label>
+              <div
+                class="type-toggle"
+                role="radiogroup"
+                aria-label="Transaction Type"
+              >
+                <label class="type-option">
+                  <input type="radio" name="txnType" value="expense" checked />
+                  <span class="type-btn expense-opt">Expense (-)</span>
+                </label>
+                <label class="type-option">
+                  <input type="radio" name="txnType" value="income" />
+                  <span class="type-btn income-opt">Income (+)</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="txnTitle" class="form-label"
+                  >Title / Description *</label
+                >
+                <input
+                  type="text"
+                  id="txnTitle"
+                  class="form-control"
+                  placeholder="e.g., Campus Lunch, Monthly Allowance"
+                  required
+                  maxlength="60"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="txnAmount" class="form-label"
+                  >Amount (₹ INR) *</label
+                >
+                <input
+                  type="number"
+                  id="txnAmount"
+                  class="form-control"
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0.01"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="txnCategory" class="form-label">Category *</label>
+                <select id="txnCategory" class="form-control" required></select>
+              </div>
+
+              <div class="form-group">
+                <label for="txnDate" class="form-label">Date *</label>
+                <input type="date" id="txnDate" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="txnNotes" class="form-label">Notes (Optional)</label>
+              <input
+                type="text"
+                id="txnNotes"
+                class="form-control"
+                placeholder="UPI ref, vendor, or brief note..."
+                maxlength="100"
+              />
+            </div>
+
+            <div id="formErrorMsg" class="error-text hidden" role="alert"></div>
+
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="btn btn-primary btn-block"
+                id="submitTxnBtn"
+              >
+                Save Transaction
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline hidden"
+                id="cancelEditBtn"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </article>
+
+        <!-- Right Column: Monthly Budget Cap + Interactive Chart -->
+        <div class="right-stack">
+          <!-- Monthly Budget Governance Card (FR-04) -->
+          <article class="card budget-card">
+            <div class="card-header">
+              <div>
+                <h3>Monthly Budget Governance</h3>
+                <p class="card-subtitle" id="budgetMonthDisplay">
+                  Active Month Cap
+                </p>
+              </div>
+              <form id="budgetForm" class="budget-inline-form">
+                <input
+                  type="number"
+                  id="monthlyLimitInput"
+                  class="form-control form-control-sm"
+                  placeholder="Set Limit (₹)"
+                  min="0"
+                  step="100"
+                  aria-label="Monthly Budget Limit in INR"
+                />
+                <button type="submit" class="btn btn-primary btn-sm">
+                  Set Cap
+                </button>
+              </form>
+            </div>
+
+            <div class="budget-stats">
+              <div>
+                <span class="stat-label">Spent</span>
+                <strong id="budgetSpentText">₹0.00</strong>
+              </div>
+              <div>
+                <span class="stat-label">Monthly Limit</span>
+                <strong id="budgetLimitText">₹0.00</strong>
+              </div>
+              <div>
+                <span class="stat-label">Remaining</span>
+                <strong id="budgetRemainingText">₹0.00</strong>
+              </div>
+            </div>
+
+            <div
+              class="progress-wrapper"
+              role="progressbar"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+              id="budgetProgressWrapper"
+            >
+              <div
+                class="progress-bar status-safe"
+                id="budgetProgressBar"
+                style="width: 0%"
+              ></div>
+            </div>
+            <div class="progress-footer">
+              <span id="budgetStatusBadge" class="status-pill status-safe"
+                >On Track (0%)</span
+              >
+              <span class="text-muted">80% Warning | 100% Exceeded</span>
+            </div>
+          </article>
+
+          <!-- Dynamic Category Analytics Chart (FR-06) -->
+          <article class="card chart-card">
+            <div class="card-header">
+              <div>
+                <h3>Expense Breakdown by Category</h3>
+                <p class="card-subtitle">
+                  Real-time distribution for filtered period
+                </p>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="expenseChart"></canvas>
+              <div id="emptyChartState" class="empty-chart hidden">
+                <p>No expense records for this period to visualize.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Multi-Criteria Search, Filter & Ledger Table (FR-02, FR-05, FR-07) -->
+      <section class="card ledger-card" aria-label="Transaction Ledger">
+        <div class="ledger-header">
+          <div>
+            <h3>Transaction Ledger</h3>
+            <p class="card-subtitle" id="ledgerCountText">Showing 0 records</p>
+          </div>
+
+          <div class="export-actions">
+            <button
+              type="button"
+              class="btn btn-outline btn-sm"
+              id="exportCsvBtn"
+            >
+              ⬇ Export CSV
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline btn-sm"
+              id="printReportBtn"
+            >
+              🖨 Print Statement
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger-outline btn-sm"
+              id="clearAllBtn"
+            >
+              Clear All
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <div class="filter-group search-group">
+            <label for="searchInput" class="sr-only">Search transactions</label>
+            <input
+              type="search"
+              id="searchInput"
+              class="form-control"
+              placeholder="Search title or notes..."
+            />
+          </div>
+
+          <div class="filter-group">
+            <label for="filterMonth" class="sr-only">Filter by Month</label>
+            <input
+              type="month"
+              id="filterMonth"
+              class="form-control"
+              title="Filter by Month"
+            />
+          </div>
+
+          <div class="filter-group">
+            <label for="filterCategory" class="sr-only"
+              >Filter by Category</label
+            >
+            <select id="filterCategory" class="form-control">
+              <option value="all">All Categories</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filterType" class="sr-only">Filter by Type</label>
+            <select id="filterType" class="form-control">
+              <option value="all">All Types</option>
+              <option value="expense">Expenses Only</option>
+              <option value="income">Income Only</option>
+            </select>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            id="resetFiltersBtn"
+          >
+            Reset
+          </button>
+        </div>
+
+        <!-- Responsive Table Wrapper -->
+        <div class="table-responsive">
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Title & Notes</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th class="text-right">Amount (₹)</th>
+                <th class="text-center no-print">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+              <!-- Rows injected safely via DOM API in app.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="emptyLedgerState" class="empty-state hidden">
+          <div class="empty-icon">📊</div>
+          <h4>No transactions found</h4>
+          <p>
+            Add a new income/expense entry above or adjust your active filters.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer no-print">
+      <div class="container">
+        <p>
+          Personal Expense & Budget Tracker • 100% Client-Side Offline
+          Persistence (localStorage)
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

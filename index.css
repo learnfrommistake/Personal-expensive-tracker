@@ -1,0 +1,985 @@
+/* ==========================================================================
+   1. CSS Custom Properties (Theme Tokens & Responsive Scales)
+   ========================================================================== */
+:root {
+  --bg-body: #f4f6fb;
+  --bg-surface: #ffffff;
+  --bg-muted: #f8fafc;
+  --border-color: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-soft: rgba(37, 99, 235, 0.1);
+
+  --success: #16a34a;
+  --success-soft: rgba(22, 163, 74, 0.12);
+
+  --warning: #d97706;
+  --warning-soft: rgba(217, 119, 6, 0.14);
+
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.12);
+
+  --purple: #7c3aed;
+  --purple-soft: rgba(124, 58, 237, 0.12);
+
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --transition: 0.2s ease;
+}
+
+/* Dark Theme Override */
+[data-theme="dark"] {
+  --bg-body: #0b1120;
+  --bg-surface: #1e293b;
+  --bg-muted: #0f172a;
+  --border-color: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --primary-soft: rgba(59, 130, 246, 0.18);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   2. Base Reset & Overflow Guard
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.text-right {
+  text-align: right;
+}
+.text-center {
+  text-align: center;
+}
+.text-muted {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   3. Top Navigation Bar
+   ========================================================================== */
+.navbar {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), #4f46e5);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.brand-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+/* ==========================================================================
+   4. Buttons & Form Controls (Touch-Friendly 44px Targets)
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-height: 40px;
+  padding: 0.55rem 0.95rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-sm {
+  font-size: 0.78rem;
+  min-height: 36px;
+  padding: 0.38rem 0.7rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.btn-outline:hover {
+  background-color: var(--bg-muted);
+  border-color: var(--text-muted);
+}
+
+.btn-danger-outline {
+  background-color: transparent;
+  border-color: rgba(220, 38, 38, 0.35);
+  color: var(--danger);
+}
+
+.btn-danger-outline:hover {
+  background-color: var(--danger-soft);
+}
+
+.btn-icon {
+  min-height: 36px;
+  padding: 0.38rem 0.65rem;
+  background: var(--bg-muted);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   5. Alert Banner & KPI Cards
+   ========================================================================== */
+.main-content {
+  padding-top: 1.25rem;
+  padding-bottom: 2.5rem;
+  flex: 1;
+}
+
+.alert-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.15rem;
+  border: 1px solid transparent;
+}
+
+.alert-banner.alert-warning {
+  background-color: var(--warning-soft);
+  border-color: var(--warning);
+  color: var(--text-primary);
+}
+
+.alert-banner.alert-danger {
+  background-color: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--text-primary);
+}
+
+.alert-icon {
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.alert-text p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.9rem;
+  margin-bottom: 1.35rem;
+}
+
+.card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem;
+  box-shadow: var(--shadow-sm);
+  min-width: 0; /* Prevents CSS Grid blowout */
+}
+
+.kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.kpi-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.kpi-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge-green {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.badge-red {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.badge-blue {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.badge-purple {
+  background: var(--purple-soft);
+  color: var(--purple);
+}
+
+.kpi-value {
+  font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.2rem;
+  word-break: break-word;
+}
+
+.kpi-income .kpi-value {
+  color: var(--success);
+}
+.kpi-expense .kpi-value {
+  color: var(--danger);
+}
+
+.kpi-meta {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   6. Workspace Layout (Form + Budget Governance + Chart)
+   ========================================================================== */
+.workspace-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 1.15rem;
+  margin-bottom: 1.35rem;
+  align-items: start;
+}
+
+.right-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  min-width: 0;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.card-header h3 {
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.card-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.pill {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 0.9rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: var(--text-secondary);
+}
+
+.form-control {
+  width: 100%;
+  min-height: 42px;
+  padding: 0.55rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  background-color: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: border-color var(--transition);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.form-control-sm {
+  min-height: 36px;
+  padding: 0.38rem 0.65rem;
+  font-size: 0.85rem;
+  width: 135px;
+}
+
+/* Segmented Radio Toggle */
+.type-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  background: var(--bg-muted);
+  padding: 0.25rem;
+  border-radius: 9px;
+  border: 1px solid var(--border-color);
+}
+
+.type-option input {
+  display: none;
+}
+
+.type-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0.45rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 7px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+
+.type-option input:checked + .expense-opt {
+  background-color: var(--danger);
+  color: #ffffff;
+}
+
+.type-option input:checked + .income-opt {
+  background-color: var(--success);
+  color: #ffffff;
+}
+
+.error-text {
+  color: var(--danger);
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* Budget Progress Bar */
+.budget-inline-form {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.budget-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  background: var(--bg-muted);
+  padding: 0.75rem;
+  border-radius: 9px;
+  margin-bottom: 0.85rem;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.budget-stats strong {
+  font-size: 0.92rem;
+  word-break: break-word;
+}
+
+.progress-wrapper {
+  width: 100%;
+  height: 12px;
+  background-color: var(--bg-muted);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.progress-bar {
+  height: 100%;
+  transition:
+    width 0.35s ease,
+    background-color 0.35s ease;
+}
+
+.progress-bar.status-safe {
+  background-color: var(--success);
+}
+.progress-bar.status-warning {
+  background-color: var(--warning);
+}
+.progress-bar.status-danger {
+  background-color: var(--danger);
+}
+
+.progress-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+}
+
+.status-pill {
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 0.16rem 0.55rem;
+  border-radius: 999px;
+}
+
+.status-pill.status-safe {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.status-pill.status-warning {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.status-pill.status-danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+/* Chart Canvas */
+.chart-container {
+  position: relative;
+  height: 245px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-chart {
+  position: absolute;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  padding: 0 1rem;
+}
+
+/* ==========================================================================
+   7. Filter Bar & Desktop Ledger Table
+   ========================================================================== */
+.ledger-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ledger-table th {
+  text-align: left;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  padding: 0.75rem;
+  border-bottom: 2px solid var(--border-color);
+  background-color: var(--bg-muted);
+}
+
+.ledger-table td {
+  padding: 0.8rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.ledger-table tbody tr:hover {
+  background-color: var(--bg-muted);
+}
+
+.txn-title-cell strong {
+  display: block;
+  font-weight: 600;
+}
+
+.txn-title-cell small {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  display: block;
+}
+
+.cat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.22rem 0.6rem;
+  border-radius: 6px;
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+}
+
+.cat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.amt-income {
+  color: var(--success);
+  font-weight: 700;
+}
+.amt-expense {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.action-btns {
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.btn-table {
+  min-height: 32px;
+  padding: 0.28rem 0.65rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.btn-table:hover {
+  background: var(--bg-muted);
+}
+.btn-table.delete:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2.25rem 1rem;
+  color: var(--text-muted);
+}
+
+.empty-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.footer {
+  text-align: center;
+  padding: 1.15rem 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-surface);
+}
+
+.print-only-header {
+  display: none;
+}
+
+/* ==========================================================================
+   8. Responsive Breakpoints (Tablets & Mobile Phones)
+   ========================================================================== */
+
+/* Tablet Landscape & Small Laptops */
+@media (max-width: 1024px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .workspace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .search-group {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Mobile Devices (<= 680px): Zero-Scroll Card Ledger & Native Layout */
+@media (max-width: 680px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  /* Prevent iOS Safari auto-zoom on form focus */
+  .form-control,
+  .form-control-sm {
+    font-size: 16px;
+  }
+
+  /* Compact Navbar */
+  .brand-subtitle {
+    display: none;
+  }
+
+  .nav-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr) auto;
+    gap: 0.4rem;
+  }
+
+  .nav-actions .btn-sm,
+  .nav-actions .file-upload-label {
+    padding: 0.35rem 0.4rem;
+    font-size: 0.74rem;
+    text-align: center;
+  }
+
+  /* 2x2 KPI Grid on Mobile */
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+  }
+
+  .kpi-grid .card {
+    padding: 0.85rem;
+  }
+
+  .kpi-badge {
+    display: none;
+  }
+
+  .kpi-value {
+    font-size: 1.18rem;
+  }
+
+  /* Single-column forms & filters */
+  .form-row,
+  .filter-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .budget-inline-form {
+    width: 100%;
+  }
+
+  .budget-inline-form input {
+    flex: 1;
+    width: auto;
+  }
+
+  .budget-stats {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+
+  .budget-stats div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.35rem;
+  }
+
+  .budget-stats div:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .chart-container {
+    height: 280px;
+  }
+
+  .export-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .export-actions .btn-sm {
+    padding: 0.4rem 0.35rem;
+    font-size: 0.74rem;
+  }
+
+  /* Transform Ledger Table into Responsive Mobile Cards */
+  .ledger-table thead {
+    display: none;
+  }
+
+  .ledger-table,
+  .ledger-table tbody,
+  .ledger-table tr,
+  .ledger-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .ledger-table tbody tr {
+    background-color: var(--bg-muted);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .ledger-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.35rem 0;
+    border-bottom: 1px dashed var(--border-color);
+    text-align: right;
+  }
+
+  .ledger-table td::before {
+    content: attr(data-label);
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+    margin-right: 0.75rem;
+  }
+
+  .ledger-table td.txn-title-cell {
+    display: block;
+    text-align: left;
+    padding-top: 0;
+    padding-bottom: 0.5rem;
+  }
+
+  .ledger-table td.txn-title-cell::before {
+    display: none;
+  }
+
+  .ledger-table td:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    padding-top: 0.55rem;
+    justify-content: flex-end;
+  }
+
+  .ledger-table td:last-child::before {
+    display: none;
+  }
+
+  .action-btns {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .btn-table {
+    min-height: 36px;
+    font-size: 0.82rem;
+  }
+}
+
+/* ==========================================================================
+   9. Print Statement Stylesheet (FR-07)
+   ========================================================================== */
+@media print {
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  .navbar,
+  .form-card,
+  .filter-bar,
+  .export-actions,
+  .no-print,
+  .footer {
+    display: none !important;
+  }
+
+  .print-only-header {
+    display: block;
+    text-align: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    break-inside: avoid;
+  }
+
+  .workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
